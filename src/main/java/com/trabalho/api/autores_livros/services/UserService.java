@@ -7,6 +7,8 @@ import com.trabalho.api.autores_livros.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -20,6 +22,16 @@ public class UserService {
         return new ResponseUser(savedUser.getEmail(), savedUser.getId(), savedUser.getApiKey());
     }
 
+    public List<ResponseUser> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(user -> new ResponseUser(
+                        user.getEmail(),
+                        user.getId(),
+                        user.getApiKey()
+                ))
+                .toList();
+    }
 
 
 }
