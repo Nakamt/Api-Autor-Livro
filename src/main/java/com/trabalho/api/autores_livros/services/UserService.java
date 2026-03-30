@@ -16,18 +16,23 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     private String generateApiKey(){
         return UUID.randomUUID().toString();
     }
 
     public ResponseUser createUser(RequestUser userContent){
         if(userRepository.findByEmail(userContent.email()).isPresent()){
-            throw new RuntimeException("E-mail ja cadastrado em outro user");
+            throw new RuntimeException("Email ja cadastrado!");
         }
         User user = new User(userContent.email(), userContent.password());
         user.setApiKey(generateApiKey());
 
         User savedUser = userRepository.save(user);
+
+        emailService.sendWelcomeEmail(savedUser.getEmail());
 
         return new ResponseUser(savedUser.getEmail(), savedUser.getId(), savedUser.getApiKey());
     }
